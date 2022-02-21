@@ -55,23 +55,27 @@ class NoTransaction extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Text(
-          "No transactions added yet!",
-          style: Theme.of(context).textTheme.titleMedium,
-        ),
-        const SizedBox(
-          height: 20,
-        ),
-        SizedBox(
-          child: Image.asset(
-            "assets/images/waiting.png",
-            fit: BoxFit.cover,
-          ),
-          height: 200,
-        ),
-      ],
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return Column(
+          children: [
+            Text(
+              "No transactions added yet!",
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            SizedBox(
+              child: Image.asset(
+                "assets/images/waiting.png",
+                fit: BoxFit.cover,
+              ),
+              height: constraints.maxHeight * 0.6,
+            ),
+          ],
+        );
+      },
     );
   }
 }
@@ -85,19 +89,16 @@ class TransactionList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 400,
-      child: _transactions.isEmpty
-          ? const NoTransaction()
-          : ListView.builder(
-              itemBuilder: (ctx, index) {
-                return TransactionWidget(
-                  _transactions[index],
-                  _deleteTransaction,
-                );
-              },
-              itemCount: _transactions.length,
-            ),
-    );
+    return _transactions.isEmpty
+        ? const NoTransaction()
+        : ListView.builder(
+            itemBuilder: (ctx, index) {
+              return TransactionWidget(
+                _transactions[index],
+                _deleteTransaction,
+              );
+            },
+            itemCount: _transactions.length,
+          );
   }
 }

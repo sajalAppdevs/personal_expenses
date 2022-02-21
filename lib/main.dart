@@ -52,20 +52,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final List<Transaction> _userTransactions = [
-    // Transaction(
-    //   id: "t1",
-    //   title: "New Shoes",
-    //   amount: 69.99,
-    //   date: DateTime.now(),
-    // ),
-    // Transaction(
-    //   id: "t2",
-    //   title: "Weekly Groceries",
-    //   amount: 15.63,
-    //   date: DateTime.now(),
-    // ),
-  ];
+  final List<Transaction> _userTransactions = [];
+  var _showChart = false;
 
   List<Transaction> get _recentTransactions {
     return _userTransactions
@@ -100,24 +88,58 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final appBar = AppBar(
+      title: const Text(appName),
+      actions: [
+        IconButton(
+          onPressed: () => _startAddNewTransaction(context),
+          icon: const Icon(Icons.add),
+        ),
+      ],
+    );
+
+    final height = MediaQuery.of(context).size.height -
+        appBar.preferredSize.height -
+        MediaQuery.of(context).padding.top;
+    final isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
+
+    Widget chart(double height) {
+      return SizedBox(
+        height: height,
+        child: Chart(_recentTransactions),
+      );
+    }
+
+    final txList = SizedBox(
+      height: height * 0.7,
+      child: TransactionList(_userTransactions, _deleteTransaction),
+    );
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(appName),
-        actions: [
-          IconButton(
-            onPressed: () => _startAddNewTransaction(context),
-            icon: const Icon(Icons.add),
-          )
-        ],
-      ),
+      appBar: appBar,
       body: SingleChildScrollView(
         child: SizedBox(
           width: double.infinity,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Chart(_recentTransactions),
-              TransactionList(_userTransactions, _deleteTransaction),
+              if (isLandscape)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text("Show Chart"),
+                    Switch(
+                      value: _showChart,
+                      onChanged: (val) => setState(() {
+                        _showChart = val;
+                      }),
+                    ),
+                  ],
+                ),
+              if (isLandscape)
+                _showChart ? chart(height * 0.7) : txList
+              else ...[chart(height * 0.3), txList],
             ],
           ),
         ),
