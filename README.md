@@ -1,16 +1,11 @@
-# personal_expenses
+# Personal Expenses
 
-A new Flutter project.
+A simple flutter project that shows expenses of the week.
 
-## Getting Started
+## Screenshots
 
-This project is a starting point for a Flutter application.
+### Start screen
+![screen_1](./screenshots/Screenshot (1).png)
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### Screen with data
+![screen_2](./screenshots/Screenshot (2).png)
