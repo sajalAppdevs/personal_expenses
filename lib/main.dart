@@ -1,9 +1,10 @@
+import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'strings.dart';
-
 import 'models/transaction.dart';
-
 import 'widgets/new_transaction.dart';
 import 'widgets/transaction.dart';
 import 'widgets/chart.dart';
@@ -88,21 +89,30 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final appBar = AppBar(
-      title: const Text(appName),
-      actions: [
-        IconButton(
-          onPressed: () => _startAddNewTransaction(context),
-          icon: const Icon(Icons.add),
-        ),
-      ],
-    );
+    final PreferredSizeWidget appBar = Platform.isIOS
+        ? CupertinoNavigationBar(
+            middle: const Text(appName),
+            trailing: GestureDetector(
+              child: Icon(CupertinoIcons.add),
+              onTap: () => _startAddNewTransaction(context),
+            ),
+          ) as PreferredSizeWidget
+        : AppBar(
+            title: const Text(appName),
+            actions: [
+              IconButton(
+                onPressed: () => _startAddNewTransaction(context),
+                icon: const Icon(Icons.add),
+              ),
+            ],
+          );
 
-    final height = MediaQuery.of(context).size.height -
+    final mediaQuery = MediaQuery.of(context);
+    final theme = Theme.of(context);
+    final height = mediaQuery.size.height -
         appBar.preferredSize.height -
-        MediaQuery.of(context).padding.top;
-    final isLandscape =
-        MediaQuery.of(context).orientation == Orientation.landscape;
+        mediaQuery.padding.top;
+    final isLandscape = mediaQuery.orientation == Orientation.landscape;
 
     Widget chart(double height) {
       return SizedBox(
@@ -116,9 +126,8 @@ class _MyHomePageState extends State<MyHomePage> {
       child: TransactionList(_userTransactions, _deleteTransaction),
     );
 
-    return Scaffold(
-      appBar: appBar,
-      body: SingleChildScrollView(
+    final body = SafeArea(
+      child: SingleChildScrollView(
         child: SizedBox(
           width: double.infinity,
           child: Column(
@@ -129,7 +138,8 @@ class _MyHomePageState extends State<MyHomePage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const Text("Show Chart"),
-                    Switch(
+                    Switch.adaptive(
+                      activeColor: theme.accentColor,
                       value: _showChart,
                       onChanged: (val) => setState(() {
                         _showChart = val;
@@ -144,11 +154,22 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _startAddNewTransaction(context),
-        child: const Icon(Icons.add),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
+
+    return Platform.isIOS
+        ? CupertinoPageScaffold(
+            child: body,
+            // navigationBar: appBar,
+          )
+        : Scaffold(
+            appBar: appBar,
+            body: body,
+            floatingActionButton: FloatingActionButton(
+              onPressed: () => _startAddNewTransaction(context),
+              child: const Icon(Icons.add),
+            ),
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.centerFloat,
+          );
   }
 }

@@ -13,6 +13,8 @@ class TransactionWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Card(
       margin: const EdgeInsets.symmetric(
         vertical: 8,
@@ -31,7 +33,7 @@ class TransactionWidget extends StatelessWidget {
         ),
         title: Text(
           _transaction.title,
-          style: Theme.of(context).textTheme.titleMedium,
+          style: theme.textTheme.titleMedium,
         ),
         subtitle: Text(
           DateFormat.yMMMMd().format(_transaction.date),
@@ -39,12 +41,27 @@ class TransactionWidget extends StatelessWidget {
             color: Colors.grey,
           ),
         ),
-        trailing: IconButton(
-            onPressed: () => _deleteTransaction(_transaction.id),
-            icon: Icon(
-              Icons.delete,
-              color: Theme.of(context).errorColor,
-            )),
+        trailing: MediaQuery.of(context).size.width > 460
+            ? TextButton.icon(
+                onPressed: () => _deleteTransaction(_transaction.id),
+                icon: Icon(
+                  Icons.delete,
+                  color: theme.errorColor,
+                ),
+                label: Text(
+                  "Delete Transaction",
+                  style: TextStyle(
+                    color: theme.errorColor,
+                  ),
+                ),
+              )
+            : IconButton(
+                onPressed: () => _deleteTransaction(_transaction.id),
+                icon: Icon(
+                  Icons.delete,
+                  color: theme.errorColor,
+                ),
+              ),
       ),
     );
   }
